@@ -37,3 +37,23 @@ def save_fe(df, path):
     :param path:
     :return:
     """
+
+def remove_variables_non_useful(incidentes_df):
+    """
+
+    :param incidentes_df:
+    :return:
+    """
+    incidentes_df = incidentes_df.drop(['geopoint', 'folio',
+                                        'mes_cierre', 'clas_con_f_alarma',
+                                        'fecha_cierre', 'año_cierre',
+                                        'mes_cierre', 'hora_cierre',
+                                        'delegacion_cierre', 'mes'], axis=1)
+
+    return incidentes_df
+
+def separar_mes_anio_creacion(incidentes_df):
+    incidentes_df['mes_creacion'] = incidentes_df.fecha_creacion.dt.strftime('%m')
+    incidentes_df["anio_creacion"] = incidentes_df.fecha_creacion.dt.strftime('%Y')
+
+    return incidentes_df

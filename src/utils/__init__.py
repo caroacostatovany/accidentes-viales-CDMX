@@ -87,3 +87,4 @@ def generate_label(incidentes_viales_df):
         (incidentes_viales_df.codigo_cierre == 'F') | (incidentes_viales_df.codigo_cierre == 'N'), 1, 0)
 
     return incidentes_viales_df
+
