@@ -106,17 +106,37 @@ Liga al repositorio de github/gitlab/bit bucket que contiene el código de tu pr
   + `transform()`: Función en el script `transformation.py`
   + `feature_engineering()`: Función en el script `feature_engineering.py`
 
-Ver Figura 1.
-
-![Figura 1](./images/proyecto_1_scripts.png)
-<br>
-Figura 1
-
 
 **Estructura del proyecto**
 
-![](./images/proyecto_1_file_structure.png)
+data
+    + **incidentes-viales-c5.csv**
+docs
+    + Data_Profiling.html
+images
+notebooks
+    + EDA_GEDA_OFICIAL.ipynb
+    + feature_engineering.ipynb
+src
+    + pipelines
+        + feature_engineering.py
+        + ingestion.py
+        + transformation.py
+    + utils
+        + utils.py
+    + proyect_1.py
+requirements.txt
 
-**Equipos**
+**Equipo**
 
-![](./images/equipos.png)
+|Nombre|Usuario Github| ID |
+|------|--------------|----|
+| Leonardo Ceja Pérez | lecepe00 | |
+| Enrique Ortiz Casillas | EnriqueOrtiz27 | |
+| Carolina Acosta Tovany | caroacostatovany | 000197627 |
+
+**Para correr el proyecto**
+
++ Instalar los requirements.txt 
++ Poner el **archivo incidentes-viales-c5.csv** dentro del folder **data**
++ Si se corren los jupyter notebooks, previamente ejecutar en línea de comandos `export PYTHONPATH=$PWD`
