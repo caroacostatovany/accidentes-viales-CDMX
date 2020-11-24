@@ -21,21 +21,36 @@ def load_transformation(path):
 
 def feature_generation(df):
     """
-    Crear nuevos features útiles.
+    Crear nuevos features útiles. Transformar var categóricas con OneHotEncoder
 
     :param df: Dataframe del cual se generarán nuevas variables
     :return:
     """
 
-    return df
+    transformers = [('one_hot', OneHotEncoder(), ['dia_semana', 'delegacion_inicio', 'incidente_c4',
+                                                    'tipo_entrada', 'espacio_del_dia', 'mes_creacion_str',
+                                                    'hora_simple'])]
+    col_trans = ColumnTransformer(transformers, remainder="drop", n_jobs=-1, verbose=True)
+    col_trans.fit(df)
+    df_input_vars = col_trans.transform(df)
+    final_df = pd.DataFrame(df_input_vars) # Es necesario ?
+
+    return df_input_vars
 
 
 def feature_selection(df):
     """
-    Seleccionaremos las variables importantes
+    Seleccionaremos las variables importantes 
     :param df: Dataframe del que se seleccionarán variables.
     :return:
     """
+    # Se eliminarán los features con menos del 7%
+    variance_threshold = VarianceThreshold(threshold=0.07)
+    variance_threshold.fit(df)
+
+    df_vars = variance_threshold.transform(df)
+
+    return df_vars
 
 def save_fe(df, path):
     """
@@ -48,6 +63,15 @@ def save_fe(df, path):
     # Guardar en el pickle
     save_df(df,output_path)
 
+def features_removal(df):
+    df = df.drop(['codigo_cierre', 'fecha_creacion', 'fecha_cierre',
+                          'hora_creacion', 'clas_con_f_alarma',
+                          'año_creacion', 'dia_creacion', 'mes_creacion',
+                          'delegacion_cierre'
+                          ], axis=1)
+
+    return df
+
 
 def feature_engineering(path):
     """
@@ -57,9 +81,11 @@ def feature_engineering(path):
     path: must be the root of the repo
     """
     df = load_transformation(path)
-
+    df = features_removal(df)
     # do the feature generation
+    df = feature_generation(df)
 
     # do the feature selection
+    df = feature_selection(df)
 
     save_fe(df, path)
