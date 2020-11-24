@@ -3,6 +3,7 @@ Módulo feature engineering.
 Nuestro target es...
 Tenemos un problema priorización de recursos? Creo que prevención.
 """
+from utils import load_df, save_df
 
 def load_transformation(path):
     """
@@ -10,6 +11,12 @@ def load_transformation(path):
     :param path: Path donde se encuentra el pickle
     :return:
     """
+    output_path = os.path.join(path, "transformation_df.pkl")
+
+    # Recuperar el pickle
+    incidentes_pkl = load_df(output_path)
+
+    return incidentes_pkl
 
 
 def feature_generation(df):
@@ -37,23 +44,7 @@ def save_fe(df, path):
     :param path:
     :return:
     """
+    output_path = os.path.join(path, "output", "fe_df.pkl")
+    # Guardar en el pickle
+    save_df(df,output_path)
 
-def remove_variables_non_useful(incidentes_df):
-    """
-
-    :param incidentes_df:
-    :return:
-    """
-    incidentes_df = incidentes_df.drop(['geopoint', 'folio',
-                                        'mes_cierre', 'clas_con_f_alarma',
-                                        'fecha_cierre', 'año_cierre',
-                                        'mes_cierre', 'hora_cierre',
-                                        'delegacion_cierre', 'mes'], axis=1)
-
-    return incidentes_df
-
-def separar_mes_anio_creacion(incidentes_df):
-    incidentes_df['mes_creacion'] = incidentes_df.fecha_creacion.dt.strftime('%m')
-    incidentes_df["anio_creacion"] = incidentes_df.fecha_creacion.dt.strftime('%Y')
-
-    return incidentes_df

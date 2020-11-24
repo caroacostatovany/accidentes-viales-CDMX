@@ -3,6 +3,14 @@ Funciones útiles generales.
 """
 import numpy as np
 
+CAT_COLS = ["dia_semana", "codigo_cierre", "año_cierre", "mes_cierre", "mes", "delegacion_inicio",
+            "incidente_c4", "clas_con_f_alarma", "tipo_entrada", "delegacion_cierre", "hora_creacion",
+           "hora_cierre"]
+
+DATE_COLS = ["fecha_creacion", "fecha_cierre"]
+
+NUM_COLS = ["latitud", "longitud"]
+
 def number_formatter(number, pos=None):
     """
     Convert a number into a human readable format.
@@ -49,41 +57,21 @@ def numeric_profiling(df_o, col):
 
     return profiling
 
-
-def generate_label(incidentes_viales_df):
+def load_df(path):
     """
-    Cambiar el codigo de cierre a
-    :param incidentes_viales_df: dataframe
+    Recibe el path en donde se encuentra el pickle que se quiere volver a cargar.
+    """
+    # Recuperar el pickle
+    pkl = pickle.load(open(path, "rb"))
+
+    return pkl
+
+def save_df(df, path):
+    """
+    Guardar el dataframe en un pickle
+    :param df: Dataframe que ya se guardará
+    :param path:
     :return:
     """
-    incidentes_viales_df.codigo_cierre.mask(incidentes_viales_df.codigo_cierre ==
-                                            r"(A) La unidad de atención a emergencias fue despachada, "
-                                            "llegó al lugar de los hechos y confirmó la emergencia reportada",
-                                            'A', inplace=True)
-    incidentes_viales_df.codigo_cierre.mask(incidentes_viales_df.codigo_cierre ==
-                                            r'(N) La unidad de atención a emergencias fue despachada, '
-                                            'llegó al lugar de los hechos, pero en el sitio del evento '
-                                            'nadie solicitó el apoyo de la unidad',
-                                            'N', inplace=True)
-    incidentes_viales_df.codigo_cierre.mask(incidentes_viales_df.codigo_cierre ==
-                                            r'(D) El incidente reportado se registró en dos o más '
-                                            'ocasiones procediendo a mantener un único reporte (afirmativo,'
-                                            ' informativo, negativo o falso) como el identificador para el '
-                                            'incidente',
-                                            'D', inplace=True)
-    incidentes_viales_df.codigo_cierre.mask(incidentes_viales_df.codigo_cierre ==
-                                            r'(F) El operador/a o despachador/a identifican, antes de dar '
-                                            'respuesta a la emergencia, que ésta es falsa. O al ser '
-                                            'despachada una unidad de atención a emergencias en el lugar '
-                                            'de los hechos se percatan que el incidente no corresponde al '
-                                            'reportado inicialmente',
-                                            'F', inplace=True)
-    incidentes_viales_df.codigo_cierre.mask(incidentes_viales_df.codigo_cierre ==
-                                            r'(I) El incidente reportado es afirmativo y se añade '
-                                            'información adicional al evento',
-                                            'I', inplace=True)
-
-    incidentes_viales_df['label'] = np.where(
-        (incidentes_viales_df.codigo_cierre == 'F') | (incidentes_viales_df.codigo_cierre == 'N'), 1, 0)
-
-    return incidentes_viales_df
+    # Guardar en el pickle
+    pickle.dump(df, open(path, "wb"))
