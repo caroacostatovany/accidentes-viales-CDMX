@@ -139,4 +139,5 @@ requirements.txt
 
 + Instalar los requirements.txt 
 + Poner el **archivo incidentes-viales-c5.csv** dentro del folder **data**
++ Ejecutar `python src/proyecto_1.py`
 + Si se corren los jupyter notebooks, previamente ejecutar en línea de comandos `export PYTHONPATH=$PWD`

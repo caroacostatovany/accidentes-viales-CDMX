@@ -3,7 +3,11 @@ Módulo feature engineering.
 Nuestro target es...
 Tenemos un problema priorización de recursos? Creo que prevención.
 """
-from utils import load_df, save_df
+import os
+import pickle
+import pandas as pd
+
+from utils.utils import load_df, save_df
 
 def load_transformation(path):
     """
@@ -11,10 +15,12 @@ def load_transformation(path):
     :param path: Path donde se encuentra el pickle
     :return:
     """
-    output_path = os.path.join(path, "transformation_df.pkl")
+    print("Opening transformation pickle from output path")
+    output_path = os.path.join(path, "output", "transformation_df.pkl")
 
     # Recuperar el pickle
     incidentes_pkl = load_df(output_path)
+    print("Pickle successfully retrieved.")
 
     return incidentes_pkl
 
@@ -59,9 +65,12 @@ def save_fe(df, path):
     :param path:
     :return:
     """
+    print("Saving feature engineering in pickle format")
     output_path = os.path.join(path, "output", "fe_df.pkl")
     # Guardar en el pickle
     save_df(df,output_path)
+
+    print("Successfully saved fe dataframe as 'fe_df.pkl' in folder 'output'")
 
 def features_removal(df):
     df = df.drop(['codigo_cierre', 'fecha_creacion', 'fecha_cierre',
@@ -82,10 +91,11 @@ def feature_engineering(path):
     """
     df = load_transformation(path)
     df = features_removal(df)
+
     # do the feature generation
-    df = feature_generation(df)
+    # df = feature_generation(df)
 
     # do the feature selection
-    df = feature_selection(df)
+    # df = feature_selection(df)
 
     save_fe(df, path)

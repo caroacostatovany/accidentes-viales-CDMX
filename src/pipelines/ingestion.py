@@ -1,20 +1,38 @@
 """
 Ingestion module
 """
+import os
+import pandas as pd
+import numpy as np
+import pickle
 
-def ingest_file(file_name):
+from utils.utils import MAPPING_MESES
+
+def ingest_file(path):
     """
     Function to retrieve and return the accidents dataset.
     Parameters:
     -----------
-    file_name: str
+    path: str
                Path to the file.
     Returns:
     --------
     df: pandas dataframe
     """
-    df = pd.read_csv(file_name)
+    print("Reading data...")
+    # os.chdir(path)
+    df = pd.read_csv(path)
     return df
+
+
+def create_output_folder():
+    """
+    Function to create a folder if it doesn't exist. 
+    """
+    if not os.path.exists("output"):
+        os.mkdir("output")
+        print("Creating output folder (It didn't exist!)")
+    
 
 def drop_cols(df):
     """
@@ -22,6 +40,8 @@ def drop_cols(df):
     """
     df.drop(columns = ['folio', 'geopoint', 'mes', 'mes_cierre',
                        'hora_cierre', 'año_cierre'], inplace = True)
+    print("Dropping columns...")
+    print("Columns dropped.")
     return df
 
 
@@ -38,9 +58,11 @@ def generate_label(df):
     df: pandas dataframe
     """
     # transformamos la columna para solo quedarnos con la letra del código
+    print("Generating label.")
     df["codigo_cierre"] = df["codigo_cierre"].apply(lambda x: x[1])
     df['label'] = np.where(
         (df.codigo_cierre == 'F') | (df.codigo_cierre == 'N'), 1, 0)
+    print("Label generated successfully.")
     return df
 
 def save_ingestion(df, path):
@@ -51,10 +73,13 @@ def save_ingestion(df, path):
     :param path:
     :return:
     """
-    output_path = os.path.join(path, "output", "ingest_df.pkl")
+    create_output_folder()
+    #output_path = os.path.join(path, "output", "ingest_df.pkl")
     # Guardar en el pickle
-    pickle.dump(df, open(output_path, "wb"))
-
+    print("Saving pickle in output folder")
+    os.chdir(os.path.join(path, "output"))
+    pickle.dump(df, open("ingest_df.pkl", "wb"))
+    print("Pickle saved in output folder.")
 
 def add_date_columns(df):
     """
@@ -69,14 +94,11 @@ def add_date_columns(df):
     ---------
     df: pandas dataframe with 4 new columns
     """
-    mapping_meses = {1: "Enero", 2: "Febrero", 3: "Marzo", 4: "Abril", 5: "Mayo",
-                     6: "Junio", 7: "Julio", 8: "Agosto", 9: "Septiembre", 10: "Octubre",
-                     11: "Noviembre", 12: "Diciembre"}
 
     df["año_creacion"] = df.fecha_creacion.dt.year
     df["mes_creacion"] = df.fecha_creacion.dt.month
     df["dia_creacion"] = df.fecha_creacion.dt.day
-    df["mes_creacion_str"] = df.mes_creacion.map(mapping_meses)
+    df["mes_creacion_str"] = df.mes_creacion.map(MAPPING_MESES)
     df["año_creacion"] = df["año_creacion"].astype(str)
     return df
 
@@ -108,18 +130,30 @@ def create_time_blocks(df):
     return df
 
 
-def ingest(path):
+def ingest(path, file_name):
     """
     Function to do all ingestion functions
     Parameters:
     -----------
     path: must be the root of the repo
     """
+    data_path = os.path.join(path, 'data', file_name)
 
-    df = ingest_file(path)
+    df = ingest_file(data_path)
     df = generate_label(df)
     df = drop_cols(df)
 
     save_ingestion(df, path)
+    print("Ingestion Process Completed")
+    print("--"*30)
+
+
+
+# ingest("/Users/enriqueortiz/Documents/PROJECTS/proyecto_ambulancias/data/", "incidentes-viales-c5.csv")
+
+
+
+
+
 
 

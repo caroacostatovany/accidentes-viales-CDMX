@@ -1,7 +1,10 @@
 """
 Funciones útiles generales.
 """
+import os
 import numpy as np
+import pickle
+import pandas as pd
 
 CAT_COLS = ["dia_semana", "codigo_cierre", "año_cierre", "mes_cierre", "mes", "delegacion_inicio",
             "incidente_c4", "clas_con_f_alarma", "tipo_entrada", "delegacion_cierre", "hora_creacion",
@@ -10,6 +13,10 @@ CAT_COLS = ["dia_semana", "codigo_cierre", "año_cierre", "mes_cierre", "mes", "
 DATE_COLS = ["fecha_creacion", "fecha_cierre"]
 
 NUM_COLS = ["latitud", "longitud"]
+
+MAPPING_MESES = {1: "Enero", 2: "Febrero", 3: "Marzo", 4: "Abril", 5: "Mayo",
+                 6: "Junio", 7: "Julio", 8: "Agosto", 9: "Septiembre", 10: "Octubre",
+                 11: "Noviembre", 12: "Diciembre"}
 
 def number_formatter(number, pos=None):
     """
