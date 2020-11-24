@@ -48,3 +48,18 @@ def save_fe(df, path):
     # Guardar en el pickle
     save_df(df,output_path)
 
+
+def feature_engineering(path):
+    """
+    Function to do all the modeling functions
+    Parameters:
+    -----------
+    path: must be the root of the repo
+    """
+    df = load_transformation(path)
+
+    # do the feature generation
+
+    # do the feature selection
+
+    save_fe(df, path)

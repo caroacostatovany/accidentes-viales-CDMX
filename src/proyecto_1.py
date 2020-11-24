@@ -9,5 +9,5 @@ from pipelines.feature_engineering import feature_engineering
 path = ""
 
 ingest(path)
-transform()
-feature_engineering()
+transform(path)
+feature_engineering(path)

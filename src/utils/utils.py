@@ -75,3 +75,50 @@ def save_df(df, path):
     """
     # Guardar en el pickle
     pickle.dump(df, open(path, "wb"))
+
+
+def numeric_profiling(df, col):
+    """
+    Profiling for numeric columns.
+
+    :param: column to analyze
+    :return: dictionary
+    """
+    profiling = {}
+
+    profiling.update({'max': df[col].max(),
+                      'min': df[col].min(),
+                      'mean': df[col].mean(),
+                      'stdv': df[col].std(),
+                      '25%': df[col].quantile(.25),
+                      'median': df[col].median(),
+                      '75%': df[col].quantile(.75),
+                      'kurtosis': df[col].kurt(),
+                      'skewness': df[col].skew(),
+                      'uniques': df[col].nunique(),
+                      'prop_missings': df[col].isna().sum() / df.shape[0] * 100,
+                      'top1_repeated': get_repeated_values(df, col, 1),
+                      'top2_repeated': get_repeated_values(df, col, 2), })
+
+    return profiling
+
+
+def get_repeated_values(df, col, top):
+    """
+    Function to obtain top 3 values
+    """
+    top_5 = df.groupby([col])[col] \
+        .count() \
+        .sort_values(ascending=False) \
+        .head(3)
+    indexes_top_5 = top_5.index
+
+    if ((top == 1) and (len(indexes_top_5) > 0)):
+        return indexes_top_5[0]
+    elif ((top == 2) and (len(indexes_top_5) > 1)):
+        return indexes_top_5[1]
+    elif ((top == 3) and (len(indexes_top_5) > 2)):
+        return indexes_top_5[2]
+    else:
+        return 'undefined'
+
