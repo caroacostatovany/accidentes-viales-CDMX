@@ -102,7 +102,7 @@ def features_removal(df):
 
     df = df[df['incidente_c4'].notna()]
 
-    df['hora_simple'] = incidentes.hora_simple.astype(int)
+    df['hora_simple'] = df.hora_simple.astype(int)
 
     return df
 
