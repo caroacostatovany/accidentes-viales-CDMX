@@ -16,6 +16,10 @@ from sklearn.feature_selection import VarianceThreshold
 
 from utils.utils import load_df, save_df
 
+HOURS = 24
+MONTHS = 12
+DAYS = 7
+
 def load_transformation(path):
     """
     Cargar pickle que se generó durante la transformación
@@ -39,22 +43,18 @@ def feature_generation(df):
     :param df: Dataframe del cual se generarán nuevas variables
     :return:
     """
-    # Establecemos nuestras X y Y
-    X = df[['dia_semana', 'delegacion_inicio', 'incidente_c4',
-                    'tipo_entrada', 'espacio_del_dia', 'mes_creacion_str',
-                    'hora_simple', 'latitud', 'longitud']]
-    y = df['label']
 
-    transformers = [('one_hot', OneHotEncoder(), ['dia_semana', 'delegacion_inicio', 'incidente_c4',
-                                                    'tipo_entrada', 'espacio_del_dia', 'mes_creacion_str',
-                                                    'hora_simple'])]
+    transformers = [('one_hot', OneHotEncoder(), ['delegacion_inicio', 'incidente_c4',
+                                                  'tipo_entrada', 'espacio_del_dia'])]
+
     col_trans = ColumnTransformer(transformers, remainder="drop", n_jobs=-1, verbose=True)
-    col_trans.fit(X)
-    df_input_vars = col_trans.transform(X)
+    col_trans.fit(df)
+    df_input_vars = col_trans.transform(df)
 
-    y = y.values.reshape(incidente_input_vars.shape[0], )
+    X = df_input_vars
+    y = df.label.values.reshape(df_input_vars.shape[0], )
 
-    return df_input_vars, y
+    return df_input_vars, X, y
 
 
 def feature_selection(df):
@@ -73,6 +73,7 @@ def feature_selection(df):
 
     return df_vars
 
+
 def save_fe(df, path):
     """
     Guardar el dataframe en un pickle
@@ -87,18 +88,39 @@ def save_fe(df, path):
 
     print("Successfully saved fe dataframe as 'fe_df.pkl' in folder 'output'")
 
+
 def features_removal(df):
     """
     Eliminar más features que no son necesarios
     :param df: Dataframe to adjust
     """
     df = df.drop(['codigo_cierre', 'fecha_creacion', 'fecha_cierre',
-                          'hora_creacion', 'clas_con_f_alarma',
-                          'año_creacion', 'dia_creacion', 'mes_creacion',
-                          'delegacion_cierre'
-                          ], axis=1)
+                  'hora_creacion', 'clas_con_f_alarma',
+                  'año_creacion', 'dia_semana', 'mes_creacion_str',
+                  'delegacion_cierre'
+                  ], axis=1)
 
     df = df[df['incidente_c4'].notna()]
+
+    df['hora_simple'] = incidentes.hora_simple.astype(int)
+
+    return df
+
+
+def ciclic_transformation(df):
+    """
+    Realizar transformaciones cíclicas
+    :param df:
+    """
+
+    df['sin_hr'] = np.sin(2 * np.pi * df.hora_simple / HOURS)
+    df['cos_hr'] = np.cos(2 * np.pi * df.hora_simple / HOURS)
+
+    df['sin_month'] = np.sin(2 * np.pi * df.mes_creacion / MONTHS)
+    df['cos_month'] = np.cos(2 * np.pi * df.mes_creacion / MONTHS)
+
+    df['sin_day'] = np.sin(2 * np.pi * df.dia_creacion / DAYS)
+    df['cos_day'] = np.cos(2 * np.pi * df.dia_creacion / DAYS)
 
     return df
 
@@ -137,12 +159,15 @@ def feature_engineering(path):
     """
     df = load_transformation(path)
     df = features_removal(df)
+    df = ciclic_transformation(df)
 
     # do the feature generation
-    df, y = feature_generation(df)
+    df, X, y = feature_generation(df)
 
     # do the feature selection
     df = feature_selection(df)
+
+    rfc(X, y)
 
     # Guardar el dataframe utilizado
     save_fe(df, path)
