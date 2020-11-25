@@ -146,14 +146,3 @@ def ingest(path, file_name):
     save_ingestion(df, path)
     print("Ingestion Process Completed")
     print("--"*30)
-
-
-
-# ingest("/Users/enriqueortiz/Documents/PROJECTS/proyecto_ambulancias/data/", "incidentes-viales-c5.csv")
-
-
-
-
-
-
-

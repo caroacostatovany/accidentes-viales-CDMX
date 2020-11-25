@@ -218,5 +218,5 @@ def transform(path):
     # Save the transformations
     save_transformation(df, path)
 
-# path = "/Users/enriqueortiz/Documents/PROJECTS/proyecto_ambulancias/data"
-# transform(path)
+    print("Pre-Transformation Process Completed")
+    print("--"*30)
