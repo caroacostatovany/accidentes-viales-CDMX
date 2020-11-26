@@ -72,7 +72,7 @@ def feature_generation(df):
     return df, X, y
 
 
-def feature_selection(X, Y):
+def feature_selection(df, X, Y):
     """
     Seleccionaremos las variables importantes 
     :param df: Dataframe del que se seleccionarán variables.
@@ -80,7 +80,7 @@ def feature_selection(X, Y):
     """
 
     # Separación en train y test manualmente para no alterar el tiempo.
-    lim = round(data.shape[0] * .70)  # 70% de train
+    lim = round(df.shape[0] * .70)  # 70% de train
     X_train, X_test = X[:lim], X[lim:]
     y_train, y_test = Y[:lim], Y[lim:]
 
@@ -183,7 +183,7 @@ def feature_engineering(path):
     df, X, y = feature_generation(df)
 
     # do the feature selection
-    feature_selection(X, y)
+    feature_selection(df, X, y)
 
     # Guardar el dataframe utilizado
     save_fe(df, path)
