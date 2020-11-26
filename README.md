@@ -109,15 +109,16 @@ Liga al repositorio de github/gitlab/bit bucket que contiene el código de tu pr
 
 **Estructura del proyecto**
 
-data
+
++ data
     + **incidentes-viales-c5.csv**
-docs
++ docs
     + Data_Profiling.html
-images
-notebooks
++ images
++ notebooks
     + EDA_GEDA_OFICIAL.ipynb
     + feature_engineering.ipynb
-src
++ src
     + pipelines
         + feature_engineering.py
         + ingestion.py
@@ -125,7 +126,7 @@ src
     + utils
         + utils.py
     + proyect_1.py
-requirements.txt
++ requirements.txt
 
 **Equipo**
 
