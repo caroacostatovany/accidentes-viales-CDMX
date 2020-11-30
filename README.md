@@ -133,7 +133,7 @@ Liga al repositorio de github/gitlab/bit bucket que contiene el código de tu pr
 |Nombre|Usuario Github| ID |
 |------|--------------|----|
 | Leonardo Ceja Pérez | lecepe00 | 000197818 |
-| Enrique Ortiz Casillas | EnriqueOrtiz27 | |
+| Enrique Ortiz Casillas | EnriqueOrtiz27 | 000150644 |
 | Carolina Acosta Tovany | caroacostatovany | 000197627 |
 
 **Para correr el proyecto**
