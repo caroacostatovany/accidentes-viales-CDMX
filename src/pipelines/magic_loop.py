@@ -129,10 +129,8 @@ def magic_loop(algorithms, X_train, y_train):
     :return: 
     """
 
-    estimators = {'tree': DecisionTreeClassifier(random_state = 1789), #Vive la France
-                   'random_forest': RandomForestClassifier(oob_score = 1,
-                            random_state = 1789)} 
-
+    estimators = {'tree': DecisionTreeClassifier(random_state = 1789), \
+                   'random_forest': RandomForestClassifier(oob_score = 1, random_state = 1789)}
     estimators_params = {'tree': {'max_depth': [3,5,10],
                                     'min_samples_leaf': [1,3,5]},
                           'random_forest': {'n_estimators': [100, 200, 400],
@@ -166,13 +164,13 @@ df =  filter_drop(df)
 X_train, y_train, X_test, y_test = train_test_split(df)
 X_train = transformation_pipeline(X_train, NUM_VARS, CAT_VARS)
 #to do: correr esto en la noche: 
-best_estimators = magic_loop(ALGORITHMS, X_train, y_train)
+#best_estimators = magic_loop(ALGORITHMS, X_train, y_train)
 
-i = 0
-for estimator in best_estimators:
-    nombre = "modelo_" + str(i) + ".pkl"
-    joblib.dump(estimator, nombre)
-    i += 1
+#i = 0
+#for estimator in best_estimators:
+#    nombre = "modelo_" + str(i) + ".pkl"
+#    joblib.dump(estimator, nombre)
+#    i += 1
 
 
 
