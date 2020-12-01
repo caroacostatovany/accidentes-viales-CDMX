@@ -19,7 +19,9 @@ from sklearn.impute import SimpleImputer
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import TimeSeriesSplit
 import joblib
+
 
 
 COLS_TO_KEEP = ['incidente_c4', 'latitud', 'longitud', 'bool_llamada', 'espacio_del_dia', 
@@ -137,6 +139,10 @@ def magic_loop(algorithms, X_train, y_train):
                                             'max_depth': [5, 10, 15]}
                         }
 
+
+    nombres = {'tree': "decision_tree.joblib",
+                'random_forest': 'random_forest.joblib'}
+
     tscv = TimeSeriesSplit(n_splits=5)
     print("Beginning magic loop. This may take a while.")
     best_estimators = []
@@ -150,7 +156,8 @@ def magic_loop(algorithms, X_train, y_train):
 
         gs.fit(X_train, y_train)
         best_estimators.append(gs)
-        print("successfully saved best estimator for chosen algorithm.")
+        joblib.dump(estimator, nombres[algorithm])
+        print("successfully saved best estimator .")
 
     return best_estimators
 
@@ -164,7 +171,7 @@ df =  filter_drop(df)
 X_train, y_train, X_test, y_test = train_test_split(df)
 X_train = transformation_pipeline(X_train, NUM_VARS, CAT_VARS)
 #to do: correr esto en la noche: 
-#best_estimators = magic_loop(ALGORITHMS, X_train, y_train)
+best_estimators = magic_loop(ALGORITHMS, X_train, y_train)
 
 #i = 0
 #for estimator in best_estimators:
