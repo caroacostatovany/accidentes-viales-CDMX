@@ -11,6 +11,8 @@ import pandas as pd
 import numpy as np 
 import pickle
 import os
+import time
+import joblib
 from utils import load_df #cambiar por utils.utiles; en mi compu lo hice un poco distinto
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
@@ -20,16 +22,16 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import TimeSeriesSplit
-import joblib
+
 
 
 
 COLS_TO_KEEP = ['incidente_c4', 'latitud', 'longitud', 'bool_llamada', 'espacio_del_dia', 
-                'delegacion_inicio', 'label'] 
+                'label']  #delegacion_inicio maybe no
 
 NUM_VARS = ["latitud", "longitud", "bool_llamada"] #bool no es numérica pero es binaria; funciona
 
-CAT_VARS = ["incidente_c4", "delegacion_inicio", "espacio_del_dia"]
+CAT_VARS = ["incidente_c4", "espacio_del_dia"] #delegacion_inicio 
 
 
 ALGORITHMS = ['tree', 'random_forest']
@@ -154,10 +156,12 @@ def magic_loop(algorithms, X_train, y_train):
         gs = GridSearchCV(estimator, grid_params, scoring='precision', cv = tscv,
                           n_jobs = -1)
 
+        start = time.time()
         gs.fit(X_train, y_train)
         best_estimators.append(gs)
-        joblib.dump(estimator, nombres[algorithm])
+        joblib.dump(gs, nombres[algorithm])
         print("successfully saved best estimator .")
+        print(f"Total number of seconds: {time.time() - start}")
 
     return best_estimators
 
