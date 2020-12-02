@@ -71,7 +71,7 @@ def filter_drop(df):
                             "hora_simple"])
     return df[COLS_TO_KEEP].dropna()
 
-#el tercer paso sería el famoso magic loop, también conocido como 'Magimboo' por los fans de Dragon Ball-Z 
+#el tercer paso sería el famoso magic loop, también conocido como 'Majin Boo' por los fans de Dragon Ball-Z 
 #(entre ellos Rhayid Ghani)
 
 
@@ -123,11 +123,11 @@ def transformation_pipeline(X_train, numerical_attributes, categorical_attribute
     X_prepared = full_pipeline.fit_transform(X_train)
     return X_prepared
 
-#ahora sí, ya podemos implementar el Magimboo
+#ahora sí, ya podemos implementar el Majin Boo
 
 def magic_loop(algorithms, X_train, y_train):
     """
-    Función para implementar al famosísimo Magimboo.
+    Función para implementar al famosísimo Majin Boo
     :param algorithms: list (of algorithms)
     :X_train, y_train: features and labels of training set, respectively
     :return: 
