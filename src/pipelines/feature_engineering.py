@@ -67,8 +67,12 @@ def feature_generation(df):
     X = col_trans.fit_transform(df.drop(columns="label"))
     y = df.label.values.reshape(X.shape[0],)
     print("Successfully transformation of the discrete variables.'")
-
     print (X.shape)
+
+    print("Converting to dataframe...")
+    X = X.todense()
+    df = pd.DataFrame(df, columns = col_trans.get_feature_names)
+    df['label'] = y
 
     return df, X, y
 
@@ -166,7 +170,7 @@ def ciclic_transformation(df):
     return df
 
 
-def feature_engineering(path):
+def feature_engineering(path, magic_loop=False):
     """
     Function to do all the modeling functions
     Parameters:
@@ -184,7 +188,8 @@ def feature_engineering(path):
     df, X, y = feature_generation(df)
 
     # do the feature selection
-    feature_selection(df, X, y)
+    if (magic_loop == False):
+        feature_selection(df, X, y)
 
     # Guardar el dataframe utilizado
     save_fe(df, path)
