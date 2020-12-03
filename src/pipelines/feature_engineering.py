@@ -146,6 +146,8 @@ def features_removal(df):
     df['hora_simple'] = df.hora_simple.astype(int)
     df['año_creacion'] = df.año_creacion.astype(int)
 
+    df['incidente_c4'] = df['incidente_c4'].str.lower()
+
     return df
 
 
