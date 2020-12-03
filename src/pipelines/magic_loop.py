@@ -11,19 +11,19 @@ import pandas as pd
 import numpy as np 
 import pickle
 import os
+import random
 import time
 import joblib
-from utils import load_df #cambiar por utils.utiles; en mi compu lo hice un poco distinto
+from src.utils.utils import load_df #cambiar por utils.utiles; en mi compu lo hice un poco distinto
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.impute import SimpleImputer
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.model_selection import GridSearchCV
-from sklearn.model_selection import TimeSeriesSplit
+from sklearn.model_selection import GridSearchCV, TimeSeriesSplit
 
-
+from src.pipelines.model_evaluation import plot_roc_auc_curve
 
 
 COLS_TO_KEEP = ['incidente_c4', 'latitud', 'longitud', 'bool_llamada', 'espacio_del_dia', 
@@ -125,7 +125,7 @@ def transformation_pipeline(X_train, numerical_attributes, categorical_attribute
 
 #ahora sí, ya podemos implementar el Majin Boo
 
-def magic_loop(algorithms, X_train, y_train):
+def magic_loop(algorithms, X_train, y_train, X_test, y_test):
     """
     Función para implementar al famosísimo Majin Boo
     :param algorithms: list (of algorithms)
@@ -161,21 +161,32 @@ def magic_loop(algorithms, X_train, y_train):
         best_estimators.append(gs)
         joblib.dump(gs, nombres[algorithm])
         print("successfully saved best estimator .")
+
+
+        # vemos las métricas por algoritmo
+
+        # predicciones con el mejor predictor
+        predicted_labels = gs.predict(X_test)
+
+        # predicciones en score con el mejor predictor
+        predicted_scores = gs.predict_proba(X_test)
+
+        # Ploteamos la curva y guardamos la imagen
+        metrics(estimators[algorithm], y_test,
+                           predicted_scores, predicted_labels)
+
+
         print(f"Total number of seconds: {time.time() - start}")
 
     return best_estimators
 
-
-
-
-
-
-df = load_transformation("/Users/enriqueortiz/Documents/PROJECTS/proyecto_ambulancias")
-df =  filter_drop(df)
-X_train, y_train, X_test, y_test = train_test_split(df)
-X_train = transformation_pipeline(X_train, NUM_VARS, CAT_VARS)
+#df = load_transformation("/Users/enriqueortiz/Documents/PROJECTS/proyecto_ambulancias")
+#df =  filter_drop(df)
+#random.seed(1993)
+#X_train, y_train, X_test, y_test = train_test_split(df)
+#X_train = transformation_pipeline(X_train, NUM_VARS, CAT_VARS)
 #to do: correr esto en la noche: 
-best_estimators = magic_loop(ALGORITHMS, X_train, y_train)
+#best_estimators = magic_loop(ALGORITHMS, X_train, y_train, X_test, y_test)
 
 #i = 0
 #for estimator in best_estimators:
