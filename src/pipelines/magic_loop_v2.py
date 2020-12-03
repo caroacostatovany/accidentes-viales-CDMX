@@ -13,7 +13,7 @@ import os
 import random
 import time
 import joblib
-from src.utils.utils import load_df  # cambiar por utils.utiles; en mi compu lo hice un poco distinto
+from utils.utils import load_df  # cambiar por utils.utiles; en mi compu lo hice un poco distinto
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder
@@ -22,7 +22,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import GridSearchCV, TimeSeriesSplit
 
-from src.pipelines.model_evaluation import plot_roc_auc_curve
+from pipelines.model_evaluation import plot_roc_auc_curve
 
 COLS_TO_KEEP = ['incidente_c4', 'latitud', 'longitud', 'bool_llamada', 'espacio_del_dia',
                 'label']  # delegacion_inicio maybe no
@@ -66,7 +66,24 @@ def filter_drop(df):
     # solo por seguridad nos aseguramos que estén ordenadas (aunque ya están)
     df = df.sort_values(by=["año_creacion", "mes_creacion", "dia_creacion",
                             "hora_simple"])
-    return df[COLS_TO_KEEP].dropna()
+    df = df.drop(['one_hot__x0_ALVARO OBREGON', 'one_hot__x0_AZCAPOTZALCO',
+       'one_hot__x0_BENITO JUAREZ', 'one_hot__x0_COYOACAN',
+       'one_hot__x0_CUAJIMALPA', 'one_hot__x0_CUAUHTEMOC',
+       'one_hot__x0_GUSTAVO A. MADERO', 'one_hot__x0_IZTACALCO',
+       'one_hot__x0_IZTAPALAPA', 'one_hot__x0_MAGDALENA CONTRERAS',
+       'one_hot__x0_MIGUEL HIDALGO', 'one_hot__x0_MILPA ALTA',
+       'one_hot__x0_No Disponible', 'one_hot__x0_TLAHUAC',
+       'one_hot__x0_TLALPAN', 'one_hot__x0_VENUSTIANO CARRANZA',
+       'one_hot__x0_XOCHIMILCO', 'one_hot__x2_APLICATIVOS',
+       'one_hot__x2_BOTÓN DE AUXILIO', 'one_hot__x2_CÁMARA',
+       'one_hot__x2_LLAMADA APP911', 'one_hot__x2_LLAMADA DEL 066',
+       'one_hot__x2_LLAMADA DEL 911', 'one_hot__x2_RADIO', 'one_hot__x2_REDES',
+       'one_hot__x2_ZELLO', 'año_creacion',
+       'mes_creacion', 'dia_creacion', 'hora_simple', 'sin_hr', 'cos_hr',
+       'sin_month', 'cos_month', 'sin_day', 'cos_day'], axis=1)
+
+    df = df.dropna()
+    return df
 
 
 # el tercer paso sería el famoso magic loop, también conocido como 'Majin Boo' por los fans de Dragon Ball-Z
@@ -177,6 +194,10 @@ def magic_loop(algorithms, X_train, y_train, X_test, y_test):
 
 def modeling(path):
     df = load_transformation(path)
+
+    df = filter_drop(df)
+
+    print(df)
 
     X = df.drop('label', axis=1)
     Y = df['label']

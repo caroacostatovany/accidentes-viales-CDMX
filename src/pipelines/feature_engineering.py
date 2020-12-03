@@ -71,7 +71,7 @@ def feature_generation(df):
 
     print("Converting to dataframe...")
     X = X.todense()
-    df = pd.DataFrame(df, columns = col_trans.get_feature_names)
+    df = pd.DataFrame(X, columns = col_trans.get_feature_names())
     df['label'] = y
 
     return df, X, y
@@ -193,6 +193,11 @@ def feature_engineering(path, magic_loop=False):
     if (magic_loop == False):
         feature_selection(df, X, y)
 
+    print(df['one_hot__x1_accidente-choque con lesionados'])
+    print("*****")
+
     # Guardar el dataframe utilizado
     save_fe(df, path)
     print("Feature Engineering Process Completed")
+    print("--"*30)
+
