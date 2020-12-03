@@ -13,7 +13,7 @@ import os
 import random
 import time
 import joblib
-from src.utils.utils import load_df  # cambiar por utils.utiles; en mi compu lo hice un poco distinto
+from utils.utils import load_df  # cambiar por utils.utiles; en mi compu lo hice un poco distinto
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder
@@ -22,7 +22,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import GridSearchCV, TimeSeriesSplit
 
-from src.pipelines.model_evaluation import plot_roc_auc_curve
+from pipelines.model_evaluation import plot_roc_auc_curve
 
 COLS_TO_KEEP = ['incidente_c4', 'latitud', 'longitud', 'bool_llamada', 'espacio_del_dia',
                 'label']  # delegacion_inicio maybe no
