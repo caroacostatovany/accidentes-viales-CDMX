@@ -178,6 +178,7 @@ def feature_engineering(path, magic_loop=False):
     Parameters:
     -----------
     path: must be the root of the repo
+    magic_loop: In false means we will run RandomForest only
     """
     # Cargamos el picke
     df = load_transformation(path)
@@ -192,9 +193,6 @@ def feature_engineering(path, magic_loop=False):
     # do the feature selection
     if (magic_loop == False):
         feature_selection(df, X, y)
-
-    print(df['one_hot__x1_accidente-choque con lesionados'])
-    print("*****")
 
     # Guardar el dataframe utilizado
     save_fe(df, path)

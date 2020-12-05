@@ -64,6 +64,7 @@ def numeric_profiling(df_o, col):
 
     return profiling
 
+
 def load_df(path):
     """
     Recibe el path en donde se encuentra el pickle que se quiere volver a cargar.
@@ -72,6 +73,7 @@ def load_df(path):
     pkl = pickle.load(open(path, "rb"))
 
     return pkl
+
 
 def save_df(df, path):
     """
@@ -129,3 +131,11 @@ def get_repeated_values(df, col, top):
     else:
         return 'undefined'
 
+
+def create_images_folder():
+    """
+    Function to create a folder if it doesn't exist.
+    """
+    if not os.path.exists("images"):
+        os.mkdir("images")
+        print("Creating images folder (It didn't exist!)")
