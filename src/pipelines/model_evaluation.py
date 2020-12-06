@@ -12,7 +12,10 @@ from utils.utils import load_df, save_df, create_images_folder
 
 from sklearn.metrics import roc_curve, roc_auc_score
 from sklearn.metrics import precision_recall_curve
+from sklearn.metrics import precision_score, recall_score
 
+ambulancias_disponibles_al_dia = 20.0
+num_llamadas_al_dia = 554.0
 
 def load_model(path, file):
     """
@@ -92,15 +95,64 @@ def eficiencia_cobertura():
     """
     pass
 
+def precision_at_k(y_true, y_scores, k):
+    """
+    Obtain precision at k
+    """
+    threshold = np.sort(y_scores)[::-1][int(k*(len(y_scores)-1))]
+    y_pred = np.asarray([1 if i >= threshold else 0 for i in y_scores])
 
-def plot_precision_recall_curve(y_test, predicted_scores):
+    return precision_score(y_true, y_pred)
+
+def recall_at_k(y_true, y_scores, k):
+    """
+    Obtain recall at k
+    """
+    threshold = np.sort(y_scores)[::-1][int(k*(len(y_scores)-1))]
+    y_pred = np.asarray([1 if i >= threshold else 0 for i in y_scores])
+
+    return recall_score(y_true, y_pred)
+
+def plot_precision_recall_curve(y_true, y_scores, metrics_report):
     """
     Genera la curva de precision recall con el modelo seleccionado incluyendo una línea en k.
     """
-    precision, recall, thresholds_2 = precision_recall_curve(y_test,
-                                                             predicted_scores[:,1], pos_label=1)
+    k_values = list(np.arange(0.1, 1.1, 0.1))
+    pr_k = pd.DataFrame()
 
-    thresholds_2 = np.append(thresholds_2, 1)
+    for k in k_values:
+        d = dict()
+        d['k'] = k
+        ## get_top_k es una función que ordena los scores de
+        ## mayor a menor y toma los k% primeros
+        #top_k = get_top_k(y_scores, k)
+        #top_k = y_scores
+        # print(precision_at_k(y_true, y_scores, k))
+        d['precision'] = precision_at_k(y_true, y_scores, k)#(top_k)
+        d['recall'] = recall_at_k(y_true, y_scores, k)#(top_k, predictions)
+
+        pr_k = pr_k.append(d, ignore_index=True)
+
+    # para la gráfica
+    fig, ax1 = plt.subplots()
+    ax1.plot(pr_k['k'], pr_k['precision'], label='precision')
+    ax1.plot(pr_k['k'], pr_k['recall'], label='recall')
+    plt.legend()
+    plt.savefig(r'./images/precision_recall_1.jpg', dpi=300)
+
+
+    fig, ax1 = plt.subplots()
+    ax1.plot(metrics_report.threshold, metrics_report.precision, label="Precision")
+    ax1.plot(metrics_report.threshold, metrics_report.recall, label="Recall")
+    ax1.plot(metrics_report.threshold, metrics_report.tnr, label="True negative rate")
+    plt.axvline(x=k, color="red", linestyle="--", label="k")
+    plt.legend(loc="best")
+    plt.xlabel("k")
+    plt.ylabel("metric value")
+    plt.savefig(r'./images/precision_recall_2.jpg', dpi=300)
+    print("Successfully saved precision_recall@k plot in 'images'.")
+
+    return pr_k
 
 
 def load_train_test_datasets(path):
@@ -156,4 +208,4 @@ def metrics(path, algorithm='LogisticRegresion'):
     save_metrics(metrics_df, path)
 
     # Ploteamos la curva de precision y recall en k
-    plot_precision_recall_curve(y_test, predicted_scores)
+    plot_precision_recall_curve(predicted_labels, y_test, metrics_df)
