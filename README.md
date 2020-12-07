@@ -8,6 +8,9 @@ Noviembre 2020
     + **incidentes-viales-c5.csv**
 + docs
     + Data_Profiling.html
+    + Project Scoping.pdf
+    + Reporte_metricas_final.pdf
+    + Slide_deck_EDA_GEDA.pdf
 + images
 + notebooks
     + EDA_GEDA_OFICIAL.ipynb
