@@ -247,7 +247,7 @@ def modeling(path):
 
     # Separación en train y test
     X_train, y_train, X_test, y_test = train_test_split(df)
-    X_train, X_test = transformation_pipeline(X_train, X_test, NUM_VARS, CAT_VARS)
+    #X_train, X_test = transformation_pipeline(X_train, X_test, NUM_VARS, CAT_VARS)
 
     # Guardamos los pickles
     save_train_test_datasets(path, X_train, y_train, X_test, y_test)
