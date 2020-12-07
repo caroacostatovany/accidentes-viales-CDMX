@@ -13,8 +13,11 @@ Noviembre 2020
     + Slide_deck_EDA_GEDA.pdf
 + images
 + notebooks
-    + EDA_GEDA_OFICIAL.ipynb
+    + aequitas.ipynb
+    + EDA_GEDA.ipynb
     + feature_engineering.ipynb
+    + Reporte.ipynb
+    + Carpeta con notebooks personales de soporte
 + output
 + src
     + pipelines
