@@ -1,6 +1,7 @@
 
 
 import seaborn as sns
+import pandas as pd
 import os 
 import pickle
 import joblib
@@ -9,6 +10,8 @@ from aequitas.bias import Bias
 from aequitas.fairness import Fairness
 from aequitas.plotting import Plot
 from sklearn.metrics import confusion_matrix
+
+from pipelines.model_evaluation import load_train_test_datasets
 
 #funciones de apoyo 
 def load_df(path):
@@ -19,7 +22,6 @@ def load_df(path):
     pkl = pickle.load(open(path, "rb"))
 
     return pkl
-
 
 
 def filter_drop(df):
@@ -58,10 +60,14 @@ def train_test_split(df, test_size=.70):
 
 
 def load_selected_model(path):
-    model = joblib.load(path) 
-    #hacerlo con pickle?
+    """
+    Carga el pickle del modelo escogido (En este caso será Logistic regresssion)
+    """
+    # output_path = os.path.join(path,'output', 'model_loop.pkl')
+    output_path = os.path.join(path,'output', 'model_loop.joblib')
+    #model = pickle.load(output_path)
+    model = joblib.load(output_path)
     return model
-
 
 
 def generate_aequitas_df(path, model):
@@ -72,22 +78,28 @@ def generate_aequitas_df(path, model):
     :return: aeq_df: Aequitas-compliant dataframe
     """
     #recover original dataframe
-    path = os.path.join(path, 'output', 'transformation_df.pkl')
-    df = load_df(path)
+    transformation_path = os.path.join(path, 'output', 'transformation_df.pkl')
+    df = load_df(transformation_path)
     df = filter_drop(df)
     #separar en train y test
-    X_train, y_train, X_test, y_test = train_test_split(df)
+    # X_train, y_train, X_test, y_test = train_test_split(df)
+    # Cargamos los datos que se utilizaron
+    X_train, y_train, X_test, y_test = load_train_test_datasets(path)
     #realizar predicciones y comparar
     predicted_scores = model.predict_proba(X_test)
     predicted_probs = pd.DataFrame(predicted_scores, columns=["probability_0", "probability_1"])
     punto_corte = .2903
     new_labels = [0 if score < punto_corte else 1 for score in predicted_probs.probability_1]
 
-    delegaciones = df.iloc[len(new_labels):,:].delegacion_inicio
+    #print (df.delegacion_inicio.head(10))
+    delegaciones = df.iloc[-len(new_labels):,:].delegacion_inicio
+    print(delegaciones)
     aeq_df = pd.DataFrame({"score": new_labels, 
                        "label_value": y_test.values,
                        "delegacion": delegaciones}
                     ).reset_index().iloc[:,1:]
+
+    aeq_df.delegacion = aeq_df.delegacion.astype("str")
     return aeq_df
 
 
@@ -124,7 +136,7 @@ def bias(df):
     xtab, atts = g.get_crosstabs(df, attr_cols=["delegacion"])
     absolute_metrics = g.list_absolute_metrics(xtab)
     bdf = bias_.get_disparity_predefined_groups(xtab, original_df = df, 
-                                ref_groups_dict = {'delegacion': 'Iztapalapa'}, 
+                                ref_groups_dict = {'delegacion': 'IZTAPALAPA'},
                                 alpha=0.05)
     print("Disparities:")
     print(bdf[['attribute_name', 'attribute_value'] + bias_.list_disparities(bdf)].round(2))
@@ -138,6 +150,9 @@ def bias(df):
 
 
 def fairness(df):
+    """
+    Genera todo el módulo de Equidad
+    """
     print("Módulo de Equidad")
     print("-"*30)
     f = Fairness()
@@ -146,7 +161,7 @@ def fairness(df):
     xtab, atts = g.get_crosstabs(df, attr_cols=["delegacion"])
     absolute_metrics = g.list_absolute_metrics(xtab)
     bdf = bias_.get_disparity_predefined_groups(xtab, original_df = df, 
-                                ref_groups_dict = {'delegacion': 'Iztapalapa'}, 
+                                ref_groups_dict = {'delegacion': 'IZTAPALAPA'},
                                 alpha=0.05)
     fdf = f.get_group_value_fairness(bdf)
     parity_determinations = f.list_parities(fdf)
@@ -159,14 +174,14 @@ def fairness(df):
     print("-"*30)
 
 
-
-#pruebas
-path = 'hola'
-modelo = load_selected_model(path)
-df = generate_aequitas_df(path, modelo)
-group(df)
-bias(df)
-fairness(df)
+def bias_main(path):
+    # pruebas
+    # path = 'hola'
+    modelo = load_selected_model(path)
+    df = generate_aequitas_df(path, modelo)
+    group(df)
+    bias(df)
+    fairness(df)
 
 
 

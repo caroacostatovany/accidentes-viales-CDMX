@@ -132,7 +132,7 @@ def save_models(model, path):
     """
     Function to save model from magic loop.
     """
-    output_path = os.path.join(path,'output','model_loop.pkl')
+    output_path = os.path.join(path,'output','model_loop.joblib')
     joblib.dump(model, output_path)
 
 
